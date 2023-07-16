@@ -1,5 +1,6 @@
 package DataBaseTestingProject;
 
+import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
@@ -8,7 +9,8 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.Statement;
 
-public class InsertDataAndReadTheDatabase {
+public class UpdateExistingDataAndThenReadTheDataBase {
+    // Connection object
     static Connection con = null;
     // Statement object
     private static Statement stmt;
@@ -34,18 +36,8 @@ public class InsertDataAndReadTheDatabase {
         }
     }
 
+    //First Read the DataBase so we can see which exact Data we want to UPDATE
     @Test(priority = 1)
-    public void InsertDataToTheTable() {
-
-        try {
-            String query = "INSERT INTO credentials VALUES ('george', 'amazed123')";
-            stmt.executeUpdate(query);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    @Test(priority = 2)
     public void ReadTheDataBase() {
         try {
             String query = "SELECT * FROM credentials";
@@ -58,9 +50,45 @@ public class InsertDataAndReadTheDatabase {
                 System.out.print(" " + res.getString(2));
                 System.out.println();
             }
-            //The Data is successfully inserted into the DataBase
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    @Test(priority = 2)
+    public void UpdateTheExistingData() {
+        try {
+            String query = "UPDATE credentials SET Username = 'vladimir99', Password = 'test123' WHERE Username = 'jeremy' && Password = 'coding123'";
+            stmt.executeUpdate(query);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Test(priority = 3)
+    public void CheckIfTheDataIsUpdatedByReadingTheDatabase() {
+        try {
+            String query = "SELECT * FROM credentials";
+            // Get the contents of userinfo table from DB
+            ResultSet res = stmt.executeQuery(query);
+            // Print the result until all the records are printed
+            // res.next() returns true if there is any next record else returns false
+            while (res.next()) {
+                System.out.print(res.getString(1));
+                System.out.print(" " + res.getString(2));
+                System.out.println();
+            }
+            //The Data is successfully UPDATED
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @AfterTest
+    public void tearDown() throws Exception {
+        // Close DB connection
+        if (con != null) {
+            con.close();
         }
     }
 }

@@ -1,5 +1,6 @@
 package DataBaseTestingProject;
 
+import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
@@ -8,7 +9,8 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.Statement;
 
-public class InsertDataAndReadTheDatabase {
+public class DeleteDataAndReadTheDataBase {
+    // Connection object
     static Connection con = null;
     // Statement object
     private static Statement stmt;
@@ -35,10 +37,9 @@ public class InsertDataAndReadTheDatabase {
     }
 
     @Test(priority = 1)
-    public void InsertDataToTheTable() {
-
+    public void DeleteDataFromTheDataBase() {
         try {
-            String query = "INSERT INTO credentials VALUES ('george', 'amazed123')";
+            String query = "DELETE FROM credentials WHERE Username = 'destiny' && Password = 'amazed'";
             stmt.executeUpdate(query);
         } catch (Exception e) {
             e.printStackTrace();
@@ -58,9 +59,17 @@ public class InsertDataAndReadTheDatabase {
                 System.out.print(" " + res.getString(2));
                 System.out.println();
             }
-            //The Data is successfully inserted into the DataBase
+            //The specific Data is successfully deleted from the DataBase
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    @AfterTest
+    public void tearDown() throws Exception {
+        // Close DB connection
+        if (con != null) {
+            con.close();
         }
     }
 }
